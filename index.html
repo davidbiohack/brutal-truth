@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sadia Khan — Show Signup</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F7F3EE; --warm-white: #FDFAF6; --charcoal: #1C1A17;
+    --gold: #C49A4A; --gold-light: #E8C97D; --blush: #D4A89A;
+    --sage: #7A8C6E; --border: #DDD5C8; --shadow: rgba(28,26,23,0.10);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; overflow-x: hidden; }
+
+  /* HERO */
+  .hero { background: var(--charcoal); color: var(--cream); padding: 64px 40px 56px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 30%, rgba(196,154,74,0.18) 0%, transparent 70%), radial-gradient(ellipse at 20% 80%, rgba(212,168,154,0.12) 0%, transparent 60%); pointer-events: none; }
+  .hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+  .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.6rem, 6vw, 4.4rem); font-weight: 300; line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 16px; }
+  .hero h1 em { font-style: italic; color: var(--gold-light); }
+  .hero-sub { font-size: 15px; font-weight: 300; color: #B8AFA5; max-width: 480px; margin: 0 auto 32px; line-height: 1.65; }
+  .riverside-banner { display: inline-flex; align-items: center; gap: 10px; background: rgba(196,154,74,0.15); border: 1px solid rgba(196,154,74,0.4); border-radius: 50px; padding: 10px 22px; font-size: 13px; color: var(--gold-light); text-decoration: none; transition: background 0.2s, border-color 0.2s; }
+  .riverside-banner:hover { background: rgba(196,154,74,0.25); border-color: rgba(196,154,74,0.7); }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 300; color: var(--charcoal); margin-bottom: 6px; }
+  .section-sub { font-size: 13px; color: #8A7F74; margin-bottom: 28px; }
+
+  /* HOW IT WORKS BANNER */
+  .how-it-works { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 32px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .how-step { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 180px; }
+  .how-num { width: 24px; height: 24px; border-radius: 50%; background: var(--charcoal); color: var(--cream); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .how-text { font-size: 12px; color: #6A6058; line-height: 1.5; }
+  .how-text strong { display: block; color: var(--charcoal); font-size: 13px; margin-bottom: 2px; }
+
+  /* SLOTS */
+  .slots-section { padding: 48px 0 24px; }
+  .day-group { margin-bottom: 40px; }
+  .day-label { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+  .slot-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; transition: box-shadow 0.2s, border-color 0.2s; }
+  .slot-card:hover:not(.slot-full) { box-shadow: 0 4px 20px var(--shadow); border-color: #C8BFB3; }
+  .slot-card.slot-full { opacity: 0.7; }
+  .slot-time { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 400; color: var(--charcoal); margin-bottom: 6px; }
+  .slot-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; border-radius: 50px; padding: 3px 10px; }
+  .pill-open { background: #EAF0E5; color: var(--sage); }
+  .pill-standby { background: #F4ECE8; color: var(--blush); }
+  .pill-full { background: #ECEAE7; color: #888; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .slot-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+
+  .btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 9px 18px; cursor: pointer; transition: all 0.18s; white-space: nowrap; letter-spacing: 0.03em; text-decoration: none; display: inline-block; text-align: center; }
+  .btn-primary { background: var(--charcoal); color: var(--cream); }
+  .btn-primary:hover { background: #2E2B27; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(28,26,23,0.3); }
+  .btn-standby { background: transparent; color: var(--blush); border: 1px solid var(--blush); }
+  .btn-standby:hover { background: #F4ECE8; transform: translateY(-1px); }
+  .btn-disabled { background: #ECEAE7; color: #A9A09A; cursor: not-allowed; pointer-events: none; }
+
+  /* SPOTS PIPS */
+  .spots-row { display: flex; gap: 5px; margin-top: 8px; align-items: center; }
+  .spot-pip { width: 10px; height: 10px; border-radius: 50%; background: #D3CDCA; }
+  .spot-pip.filled { background: var(--sage); }
+  .spot-pip.standby-filled { background: var(--blush); }
+  .spots-divider { width: 8px; }
+
+  /* GOOGLE FORM NOTE */
+  .form-note { display: flex; align-items: flex-start; gap: 8px; background: rgba(196,154,74,0.07); border: 1px solid rgba(196,154,74,0.2); border-radius: 8px; padding: 10px 13px; font-size: 12px; color: #7A6A50; line-height: 1.5; margin-bottom: 28px; }
+
+  /* RIVERSIDE */
+  .riverside-section { padding: 48px 0 64px; border-top: 1px solid var(--border); }
+  .riverside-card { background: var(--charcoal); border-radius: 14px; padding: 36px 40px; display: flex; align-items: center; gap: 32px; color: var(--cream); flex-wrap: wrap; }
+  .riverside-card-icon { width: 52px; height: 52px; border-radius: 12px; background: rgba(196,154,74,0.2); border: 1px solid rgba(196,154,74,0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .riverside-card-text { flex: 1; min-width: 200px; }
+  .riverside-card-text h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 300; color: var(--cream); margin-bottom: 6px; }
+  .riverside-card-text p { font-size: 13px; color: #9A9189; line-height: 1.5; }
+  .btn-riverside { background: var(--gold); color: var(--charcoal); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.18s; }
+  .btn-riverside:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .footer { text-align: center; padding: 24px; font-size: 12px; color: #B0A89F; border-top: 1px solid var(--border); }
+
+  /* ADMIN PANEL */
+  #admin-panel { display: none; }
+  #admin-panel.visible { display: block; }
+  .admin-hero { background: #1A1008; color: var(--cream); padding: 40px; text-align: center; border-bottom: 2px solid var(--gold); }
+  .admin-hero h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--gold-light); margin-bottom: 6px; }
+  .admin-hero p { font-size: 13px; color: #9A9189; }
+  .admin-container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+  .admin-section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; margin-bottom: 16px; color: var(--charcoal); }
+  .admin-info { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 28px; font-size: 13px; color: #6A6058; line-height: 1.7; }
+  .admin-info strong { color: var(--charcoal); }
+  .admin-info a { color: var(--gold); font-weight: 500; }
+  .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+  .btn-sheets { background: #1E6B3C; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; text-decoration: none; display: inline-block; transition: background 0.18s; }
+  .btn-sheets:hover { background: #155430; }
+  .btn-back { background: var(--charcoal); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; text-decoration: none; display: inline-block; }
+  .btn-back:hover { background: #2E2B27; }
+  .slot-summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 40px; }
+  .slot-summary-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .slot-summary-card .ss-date { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .slot-summary-card .ss-time { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; color: var(--charcoal); margin-bottom: 10px; }
+  .ss-bar { display: flex; gap: 6px; align-items: center; font-size: 12px; color: #6A6058; margin-bottom: 4px; }
+  .ss-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ss-dot.guest { background: var(--sage); }
+  .ss-dot.standby { background: var(--blush); }
+  .ss-dot.empty { background: #D3CDCA; }
+
+  @media (max-width: 600px) {
+    .slot-card { grid-template-columns: 1fr; }
+    .slot-actions { flex-direction: row; flex-wrap: wrap; }
+    .riverside-card { padding: 28px 24px; }
+    .hero { padding: 48px 24px 44px; }
+    .how-it-works { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero" id="main-hero">
+  <div class="hero-eyebrow">Now Booking Guests</div>
+  <h1>Join <em>Sadia Khan's</em><br>Show</h1>
+  <p class="hero-sub">Select your preferred time slot below. Spots are limited — only 3 guests per session with 2 standby positions available.</p>
+  <a class="riverside-banner" href="https://riverside.fm" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    Recording via Riverside.fm — link sent upon confirmation
+  </a>
+</header>
+
+<main class="container" id="main-container">
+  <section class="slots-section">
+    <p class="section-title">Available Sessions</p>
+    <p class="section-sub">May 11–15, 2026 &nbsp;·&nbsp; 3 guests per slot &nbsp;·&nbsp; 2 standby positions</p>
+
+    <div class="how-it-works">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-text"><strong>Choose your slot</strong>Click Book or Join Standby below</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-text"><strong>Fill in your details</strong>A Google Form opens with your slot pre-selected</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-text"><strong>Submit & you're in</strong>You'll receive a confirmation email shortly</div>
+      </div>
+    </div>
+
+    <div class="form-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C49A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Slot counts update when you refresh. Once you submit the form your spot is reserved — each person may only apply once.
+    </div>
+
+    <div id="slots-container"></div>
+  </section>
+
+  <section class="riverside-section">
+    <div class="riverside-card">
+      <div class="riverside-card-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C49A4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      </div>
+      <div class="riverside-card-text">
+        <h3>Recording on Riverside.fm</h3>
+        <p>All sessions are recorded on Riverside for studio-quality audio & video. Your personal guest link is sent after your signup is confirmed.</p>
+      </div>
+      <a class="btn-riverside" href="https://riverside.fm" target="_blank">Visit Riverside</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" id="main-footer">© 2026 Sadia Khan Show · All signups are reviewed before confirmation</footer>
+
+<!-- ADMIN PANEL (access via yourpage.html#admin) -->
+<div id="admin-panel">
+  <div class="admin-hero">
+    <h2>Admin Dashboard</h2>
+    <p>Sadia Khan Show · Signups live in Google Sheets</p>
+  </div>
+  <div class="admin-container">
+    <div class="admin-info">
+      <strong>All signups are stored directly in your Google Sheet.</strong><br>
+      Click the button below to open it. You'll see every guest's name, age, location, phone, email, time slot, and whether they're a confirmed guest or standby — one row per submission, in real time.
+    </div>
+    <div class="admin-actions">
+      <a class="btn-sheets" href="https://docs.google.com/spreadsheets" target="_blank">📊 Open Google Sheets</a>
+      <a class="btn-back" href="javascript:void(0)" onclick="showMain()">← Back to Signup Page</a>
+    </div>
+
+    <p class="admin-section-title">Slot Overview</p>
+    <p style="font-size:13px;color:#8A7F74;margin-bottom:20px;">
+      Slot counts below are tracked locally in this browser as a visual guide.
+      The authoritative list is always in your Google Sheet.
+    </p>
+    <div class="slot-summary-grid" id="slot-summary"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  GOOGLE FORM FIELD IDs (extracted from your pre-fill URL)
+// ═══════════════════════════════════════════════════════
+const FORM_BASE = 'https://docs.google.com/forms/d/e/1FAIpQLSdDpTYEVDKrEPnESX0eh1-WKsAa_spA6g7Z0mn95ByS4pFn8g/viewform';
+const ENTRY = {
+  name:     'entry.1570176404',
+  age:      'entry.811507802',
+  location: 'entry.1451751043',
+  phone:    'entry.1179774553',
+  email:    'entry.1031767415',
+  slot:     'entry.621276428',
+  role:     'entry.1400839026',
+};
+
+// ── SLOTS ─────────────────────────────────────────────
+// formLabel must match EXACTLY what's in the Google Form dropdown
+const SLOTS = [
+  { id: 's1',  date: 'Monday, May 11',    time: '12:00 PM – 1:00 PM', formLabel: 'Monday, May 11 — 12:00 PM – 1:00 PM' },
+  { id: 's2',  date: 'Monday, May 11',    time: '1:30 PM – 2:30 PM',  formLabel: 'Monday, May 11 — 1:30 PM – 2:30 PM'  },
+  { id: 's3',  date: 'Tuesday, May 12',   time: '12:00 PM – 1:00 PM', formLabel: 'Tuesday, May 12 — 12:00 PM – 1:00 PM' },
+  { id: 's4',  date: 'Tuesday, May 12',   time: '1:30 PM – 2:30 PM',  formLabel: 'Tuesday, May 12 — 1:30 PM – 2:30 PM'  },
+  { id: 's5',  date: 'Wednesday, May 13', time: '12:00 PM – 1:00 PM', formLabel: 'Wednesday, May 13 — 12:00 PM – 1:00 PM' },
+  { id: 's6',  date: 'Wednesday, May 13', time: '1:30 PM – 2:30 PM',  formLabel: 'Wednesday, May 13 — 1:30 PM – 2:30 PM'  },
+  { id: 's7',  date: 'Thursday, May 14',  time: '12:00 PM – 1:00 PM', formLabel: 'Thursday, May 14 — 12:00 PM – 1:00 PM' },
+  { id: 's8',  date: 'Thursday, May 14',  time: '1:30 PM – 2:30 PM',  formLabel: 'Thursday, May 14 — 1:30 PM – 2:30 PM'  },
+  { id: 's9',  date: 'Friday, May 15',    time: '12:00 PM – 1:00 PM', formLabel: 'Friday, May 15 — 12:00 PM – 1:00 PM' },
+  { id: 's10', date: 'Friday, May 15',    time: '1:30 PM – 2:30 PM',  formLabel: 'Friday, May 15 — 1:30 PM – 2:30 PM'  },
+];
+
+const MAX_MAIN    = 3;
+const MAX_STANDBY = 2;
+const COUNTS_KEY  = 'sadia_counts_v4';
+
+// ── SLOT COUNTS (local visual tracker) ────────────────
+function getCounts() {
+  try { return JSON.parse(localStorage.getItem(COUNTS_KEY)) || {}; } catch { return {}; }
+}
+function saveCounts(c) { localStorage.setItem(COUNTS_KEY, JSON.stringify(c)); }
+function getSlotCounts(id) {
+  return getCounts()[id] || { main: 0, standby: 0 };
+}
+
+// ── BUILD PRE-FILLED FORM URL ──────────────────────────
+function formURL(slot, role) {
+  const params = new URLSearchParams();
+  params.set('usp', 'pp_url');
+  params.set(ENTRY.slot, slot.formLabel);
+  params.set(ENTRY.role, role); // 'Guest' or 'Standby'
+  return FORM_BASE + '?' + params.toString();
+}
+
+// ── RENDER SLOTS ───────────────────────────────────────
+function renderSlots() {
+  const container = document.getElementById('slots-container');
+  const grouped = {};
+  SLOTS.forEach(s => { if (!grouped[s.date]) grouped[s.date] = []; grouped[s.date].push(s); });
+  container.innerHTML = '';
+  Object.entries(grouped).forEach(([date, slots]) => {
+    const day = document.createElement('div');
+    day.className = 'day-group';
+    day.innerHTML = `<div class="day-label">${date}</div>`;
+    slots.forEach(s => day.appendChild(buildSlotCard(s)));
+    container.appendChild(day);
+  });
+}
+
+function buildSlotCard(slot) {
+  const c = getSlotCounts(slot.id);
+  const mc = c.main, sc = c.standby;
+  const mf = mc >= MAX_MAIN, sf = sc >= MAX_STANDBY;
+
+  const card = document.createElement('div');
+  card.className = 'slot-card' + (mf && sf ? ' slot-full' : '');
+  card.id = `card-${slot.id}`;
+
+  // Left side
+  const left = document.createElement('div');
+  left.innerHTML = `<div class="slot-time">${slot.time}</div>`;
+
+  const meta = document.createElement('div'); meta.className = 'slot-meta';
+  const mp = document.createElement('span');
+  mp.className = `pill ${mf ? 'pill-full' : 'pill-open'}`;
+  mp.innerHTML = `<span class="dot"></span>${mc}/${MAX_MAIN} Guests`;
+  const sp = document.createElement('span');
+  sp.className = `pill ${sf ? 'pill-full' : 'pill-standby'}`;
+  sp.innerHTML = `<span class="dot"></span>${sc}/${MAX_STANDBY} Standby`;
+  meta.appendChild(mp); meta.appendChild(sp);
+  left.appendChild(meta);
+
+  // Pip indicators
+  const pips = document.createElement('div'); pips.className = 'spots-row';
+  for (let i = 0; i < MAX_MAIN; i++) {
+    const p = document.createElement('div');
+    p.className = 'spot-pip' + (i < mc ? ' filled' : '');
+    pips.appendChild(p);
+  }
+  const div = document.createElement('div'); div.className = 'spots-divider'; pips.appendChild(div);
+  for (let i = 0; i < MAX_STANDBY; i++) {
+    const p = document.createElement('div');
+    p.className = 'spot-pip' + (i < sc ? ' standby-filled' : '');
+    pips.appendChild(p);
+  }
+  left.appendChild(pips);
+
+  // Right side — buttons open pre-filled Google Form
+  const right = document.createElement('div'); right.className = 'slot-actions';
+
+  if (!mf) {
+    const a = document.createElement('a');
+    a.className = 'btn btn-primary';
+    a.textContent = 'Book This Slot';
+    a.href = formURL(slot, 'Guest');
+    a.target = '_blank';
+    a.addEventListener('click', () => incrementCount(slot.id, 'main'));
+    right.appendChild(a);
+  } else if (!sf) {
+    const fb = document.createElement('span'); fb.className = 'btn btn-disabled'; fb.textContent = 'Slot Full';
+    const sb = document.createElement('a');
+    sb.className = 'btn btn-standby';
+    sb.textContent = 'Join Standby';
+    sb.href = formURL(slot, 'Standby');
+    sb.target = '_blank';
+    sb.addEventListener('click', () => incrementCount(slot.id, 'standby'));
+    right.appendChild(fb); right.appendChild(sb);
+  } else {
+    const fb = document.createElement('span'); fb.className = 'btn btn-disabled'; fb.textContent = 'Fully Booked';
+    right.appendChild(fb);
+  }
+
+  card.appendChild(left); card.appendChild(right);
+  return card;
+}
+
+// Optimistically increment local count when someone clicks
+function incrementCount(slotId, type) {
+  const counts = getCounts();
+  if (!counts[slotId]) counts[slotId] = { main: 0, standby: 0 };
+  if (type === 'main' && counts[slotId].main < MAX_MAIN) counts[slotId].main++;
+  if (type === 'standby' && counts[slotId].standby < MAX_STANDBY) counts[slotId].standby++;
+  saveCounts(counts);
+  // Re-render after short delay so form has time to open first
+  setTimeout(renderSlots, 300);
+}
+
+// ── ADMIN ──────────────────────────────────────────────
+function showAdmin() {
+  document.getElementById('main-hero').style.display = 'none';
+  document.getElementById('main-container').style.display = 'none';
+  document.getElementById('main-footer').style.display = 'none';
+  document.getElementById('admin-panel').classList.add('visible');
+  renderSlotSummary();
+}
+function showMain() {
+  document.getElementById('main-hero').style.display = '';
+  document.getElementById('main-container').style.display = '';
+  document.getElementById('main-footer').style.display = '';
+  document.getElementById('admin-panel').classList.remove('visible');
+  window.location.hash = '';
+}
+
+function renderSlotSummary() {
+  const grid = document.getElementById('slot-summary');
+  grid.innerHTML = SLOTS.map(slot => {
+    const c = getSlotCounts(slot.id);
+    const mc = c.main, sc = c.standby;
+    const guestPips = Array.from({length: MAX_MAIN}, (_, i) =>
+      `<div class="ss-dot guest" style="opacity:${i < mc ? 1 : 0.2}"></div>`).join('');
+    const sbPips = Array.from({length: MAX_STANDBY}, (_, i) =>
+      `<div class="ss-dot standby" style="opacity:${i < sc ? 1 : 0.2}"></div>`).join('');
+    return `
+      <div class="slot-summary-card">
+        <div class="ss-date">${slot.date}</div>
+        <div class="ss-time">${slot.time}</div>
+        <div class="ss-bar">${guestPips}<span>${mc}/${MAX_MAIN} guests</span></div>
+        <div class="ss-bar">${sbPips}<span>${sc}/${MAX_STANDBY} standby</span></div>
+      </div>`;
+  }).join('');
+}
+
+// Reset counts (admin use)
+function resetCounts() {
+  if (confirm('Reset all local slot counts? This only affects the visual counters — your Google Sheet data is unchanged.')) {
+    localStorage.removeItem(COUNTS_KEY);
+    renderSlots();
+    renderSlotSummary();
+  }
+}
+
+function checkHash() { if (window.location.hash === '#admin') showAdmin(); }
+window.addEventListener('hashchange', checkHash);
+checkHash();
+renderSlots();
+</script>
+</body>
+</html>
