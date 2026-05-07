@@ -15,13 +15,13 @@
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; overflow-x: hidden; }
- 
+
   /* PAGE LOADING */
   .page-loading { position: fixed; inset: 0; background: var(--cream); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity 0.4s; }
   .page-loading.hidden { opacity: 0; pointer-events: none; }
   .page-loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
   .page-loading p { font-size: 13px; color: #8A7F74; }
- 
+
   /* HERO */
   .hero { background: var(--charcoal); color: var(--cream); padding: 64px 40px 56px; text-align: center; position: relative; overflow: hidden; }
   .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 30%, rgba(196,154,74,0.18) 0%, transparent 70%), radial-gradient(ellipse at 20% 80%, rgba(212,168,154,0.12) 0%, transparent 60%); pointer-events: none; }
@@ -31,12 +31,12 @@
   .hero-sub { font-size: 15px; font-weight: 300; color: #B8AFA5; max-width: 480px; margin: 0 auto 32px; line-height: 1.65; }
   .riverside-banner { display: inline-flex; align-items: center; gap: 10px; background: rgba(196,154,74,0.15); border: 1px solid rgba(196,154,74,0.4); border-radius: 50px; padding: 10px 22px; font-size: 13px; color: var(--gold-light); text-decoration: none; transition: background 0.2s, border-color 0.2s; }
   .riverside-banner:hover { background: rgba(196,154,74,0.25); border-color: rgba(196,154,74,0.7); }
- 
+
   /* LAYOUT */
   .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
   .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 300; color: var(--charcoal); margin-bottom: 6px; }
   .section-sub { font-size: 13px; color: #8A7F74; margin-bottom: 28px; }
- 
+
   /* SLOTS */
   .slots-section { padding: 56px 0 24px; }
   .day-group { margin-bottom: 40px; }
@@ -63,7 +63,7 @@
   .spot-pip.standby { background: var(--blush); }
   .last-updated { font-size: 11px; color: #B0A89F; margin-bottom: 24px; display: flex; align-items: center; gap: 6px; }
   .refresh-btn { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 11px; font-family: 'DM Sans', sans-serif; padding: 0; text-decoration: underline; }
- 
+
   /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(28,26,23,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; }
@@ -89,14 +89,14 @@
   .email-note svg { flex-shrink: 0; margin-top: 1px; }
   .duplicate-error { display: none; background: #FFF0F0; border: 1px solid #E08080; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #7A1A1A; margin-bottom: 14px; line-height: 1.5; }
   .duplicate-error.show { display: block; }
- 
+
   .btn-submit { width: 100%; padding: 13px; background: var(--charcoal); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border: none; border-radius: 8px; cursor: pointer; transition: all 0.18s; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-submit:hover:not(:disabled) { background: #2E2B27; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,26,23,0.25); }
   .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
   .btn-submit.loading .spinner { display: inline-block; }
- 
+
   .success-panel { display: none; text-align: center; padding: 8px 0 4px; }
   .success-panel.show { display: block; animation: fadeIn 0.35s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -106,7 +106,7 @@
   .email-highlight { display: inline-block; background: #EAF0E5; color: var(--sage); border-radius: 4px; padding: 2px 9px; font-weight: 500; margin-top: 6px; font-size: 13px; }
   .btn-done { margin-top: 20px; background: var(--charcoal); color: var(--cream); width: 100%; padding: 11px; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; }
   .btn-done:hover { background: #2E2B27; }
- 
+
   /* RIVERSIDE */
   .riverside-section { padding: 48px 0 64px; border-top: 1px solid var(--border); }
   .riverside-card { background: var(--charcoal); border-radius: 14px; padding: 36px 40px; display: flex; align-items: center; gap: 32px; color: var(--cream); flex-wrap: wrap; }
@@ -117,7 +117,7 @@
   .btn-riverside { background: var(--gold); color: var(--charcoal); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.18s; }
   .btn-riverside:hover { background: var(--gold-light); transform: translateY(-1px); }
   .footer { text-align: center; padding: 24px; font-size: 12px; color: #B0A89F; border-top: 1px solid var(--border); }
- 
+
   /* ADMIN */
   #admin-panel { display: none; }
   #admin-panel.visible { display: block; }
@@ -152,7 +152,7 @@
   .admin-stat { display: flex; flex-direction: column; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 22px; min-width: 120px; }
   .admin-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--charcoal); line-height: 1; }
   .admin-stat-label { font-size: 11px; color: #8A7F74; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
- 
+
   @media (max-width: 600px) {
     .slot-card { grid-template-columns: 1fr; }
     .slot-actions { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
@@ -164,12 +164,12 @@
 </style>
 </head>
 <body>
- 
+
 <div class="page-loading" id="page-loading">
   <div class="page-loading-spinner"></div>
   <p>Loading available slots…</p>
 </div>
- 
+
 <header class="hero" id="main-hero">
   <div class="hero-eyebrow">Now Booking Guests</div>
   <h1>Join <em>Sadia Khan's</em><br>Show</h1>
@@ -179,7 +179,7 @@
     Recording via Riverside.fm — link sent upon confirmation
   </a>
 </header>
- 
+
 <main class="container" id="main-container">
   <section class="slots-section">
     <p class="section-title">Available Sessions</p>
@@ -190,7 +190,7 @@
     </div>
     <div id="slots-container"></div>
   </section>
- 
+
   <section class="riverside-section">
     <div class="riverside-card">
       <div class="riverside-card-icon">
@@ -204,9 +204,9 @@
     </div>
   </section>
 </main>
- 
+
 <footer class="footer" id="main-footer">© 2026 Sadia Khan Show · All signups are reviewed before confirmation</footer>
- 
+
 <!-- ADMIN PANEL -->
 <div id="admin-panel">
   <div class="admin-hero">
@@ -240,7 +240,7 @@
     </div>
   </div>
 </div>
- 
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
@@ -299,7 +299,7 @@
     </div>
   </div>
 </div>
- 
+
 <script>
 // ═══════════════════════════════════════════════════════
 const APPS_SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycbz7v00VHereBHMyJtAtVIQwJTk-RDyNfPcUuuWaJrjDBo_wdLjqlT34u80FvpkKjneA/exec';
@@ -307,9 +307,9 @@ const EMAILJS_PUBLIC_KEY  = '44u1NjtmsvSQxjGh7';
 const EMAILJS_SERVICE_ID  = 'service_s7tsojm';
 const EMAILJS_TEMPLATE_ID = 'template_x6b4k4t';
 // ═══════════════════════════════════════════════════════
- 
+
 emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
- 
+
 const SLOTS = [
   { id: 's1',  date: 'Monday, May 11',    time: '12:00 PM – 1:00 PM' },
   { id: 's2',  date: 'Monday, May 11',    time: '1:30 PM – 2:30 PM'  },
@@ -322,11 +322,11 @@ const SLOTS = [
   { id: 's9',  date: 'Friday, May 15',    time: '12:00 PM – 1:00 PM' },
   { id: 's10', date: 'Friday, May 15',    time: '1:30 PM – 2:30 PM'  },
 ];
- 
+
 const MAX_MAIN = 3, MAX_STANDBY = 2, CACHE_KEY = 'sadia_cache_v5';
- 
+
 let signupData = {}, allSignups = [];
- 
+
 // ── CACHE ──────────────────────────────────────────────
 function readCache() {
   try {
@@ -338,7 +338,7 @@ function readCache() {
 function writeCache() {
   localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: signupData, flat: allSignups }));
 }
- 
+
 // ── JSONP FETCH ────────────────────────────────────────
 function jsonpFetch(url) {
   return new Promise((resolve, reject) => {
@@ -352,7 +352,7 @@ function jsonpFetch(url) {
     document.head.appendChild(script);
   });
 }
- 
+
 // ── LOAD ───────────────────────────────────────────────
 async function loadSignups(forceRefresh = false) {
   const cached = readCache();
@@ -373,31 +373,41 @@ async function loadSignups(forceRefresh = false) {
   }
   hidePageLoading();
 }
- 
+
 function buildState(rows) {
   signupData = {}; allSignups = rows;
   SLOTS.forEach(s => { signupData[s.id] = { main: [], standby: [] }; });
   rows.forEach(row => {
-    const slot = SLOTS.find(s => s.date === row.date && s.time === row.time);
+    // Fuzzy match: normalize both sides for comparison
+    const rowDate = (row.date || '').trim();
+    const rowTime = (row.time || '').trim();
+    const slot = SLOTS.find(s => {
+      const dateMatch = s.date === rowDate;
+      // Time may be truncated in sheet (e.g. "12:00 PM - 1:00" vs "12:00 PM - 1:00 PM")
+      const timeMatch = s.time === rowTime ||
+        s.time.startsWith(rowTime) ||
+        rowTime.startsWith(s.time.substring(0, 8));
+      return dateMatch && timeMatch;
+    });
     if (!slot) return;
     const type = (row.type || '').toLowerCase().includes('standby') ? 'standby' : 'main';
     signupData[slot.id][type].push(row);
   });
 }
- 
+
 function hidePageLoading() {
   const el = document.getElementById('page-loading');
   el.classList.add('hidden');
   setTimeout(() => el.style.display = 'none', 400);
 }
- 
+
 function showLastUpdated(date) {
   document.getElementById('last-updated-row').style.display = 'flex';
   document.getElementById('last-updated-text').textContent = date
     ? `Slots last updated ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
     : 'Could not connect — showing cached data';
 }
- 
+
 // ── RENDER ─────────────────────────────────────────────
 function renderSlots() {
   const container = document.getElementById('slots-container');
@@ -411,7 +421,7 @@ function renderSlots() {
     container.appendChild(day);
   });
 }
- 
+
 function buildSlotCard(slot) {
   const data = signupData[slot.id] || { main: [], standby: [] };
   const mc = data.main.length, sc = data.standby.length;
@@ -444,10 +454,10 @@ function buildSlotCard(slot) {
   card.appendChild(left); card.appendChild(right);
   return card;
 }
- 
+
 // ── MODAL ──────────────────────────────────────────────
 let currentSlot = null, currentType = null;
- 
+
 function openModal(slot, type) {
   currentSlot = slot; currentType = type;
   document.getElementById('modal-title').textContent = type === 'main' ? 'Reserve Your Spot' : 'Join the Standby List';
@@ -466,14 +476,14 @@ function openModal(slot, type) {
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
- 
+
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
 document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
- 
+
 // ── VALIDATE ───────────────────────────────────────────
 function setErr(f, m) { const el = document.getElementById(`inp-${f}`); if(el) el.classList.add('error'); const er = document.getElementById(`err-${f}`); if(er) er.textContent = m; }
 function clearErr(f) { const el = document.getElementById(`inp-${f}`); if(el) el.classList.remove('error'); const er = document.getElementById(`err-${f}`); if(er) er.textContent = ''; }
- 
+
 function validate() {
   let ok = true;
   const name = document.getElementById('inp-name').value.trim();
@@ -491,7 +501,7 @@ function validate() {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('email', 'Please enter a valid email address.'); ok = false; } else clearErr('email');
   return ok;
 }
- 
+
 // ── DUPLICATE CHECK ────────────────────────────────────
 function checkDuplicate(name, email, phone) {
   const n = name.trim().toLowerCase(), e = email.trim().toLowerCase(), p = phone.replace(/[\s\-\(\)\+]/g,'');
@@ -503,7 +513,7 @@ function checkDuplicate(name, email, phone) {
   }
   return null;
 }
- 
+
 // ── SUBMIT ─────────────────────────────────────────────
 async function submitSignup() {
   if (!validate()) return;
@@ -514,7 +524,7 @@ async function submitSignup() {
   const ph       = document.getElementById('inp-phone').value.trim();
   const phone    = cc + ' ' + ph;
   const email    = document.getElementById('inp-email').value.trim();
- 
+
   const dupErr = checkDuplicate(name, email, cc + ph.replace(/[\s\-\(\)]/g,''));
   if (dupErr) {
     const el = document.getElementById('duplicate-error');
@@ -522,22 +532,22 @@ async function submitSignup() {
     el.classList.add('show'); return;
   }
   document.getElementById('duplicate-error').classList.remove('show');
- 
+
   const slotData = signupData[currentSlot.id] || { main: [], standby: [] };
   if (currentType === 'main' && slotData.main.length >= MAX_MAIN) { alert('This slot just filled up. Please choose another.'); closeModal(); await loadSignups(true); return; }
   if (currentType === 'standby' && slotData.standby.length >= MAX_STANDBY) { alert('Standby is full. Please choose another slot.'); closeModal(); await loadSignups(true); return; }
- 
+
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.classList.add('loading');
   document.getElementById('submit-label').textContent = 'Confirming…';
- 
+
   const payload = {
     timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
     name, age, location, phone, email,
     date: currentSlot.date, time: currentSlot.time,
     type: currentType === 'main' ? 'Confirmed Guest' : 'Standby',
   };
- 
+
   // Write to Google Sheets
   try {
     await fetch(APPS_SCRIPT_URL, {
@@ -546,13 +556,13 @@ async function submitSignup() {
       body: JSON.stringify(payload),
     });
   } catch (err) { console.warn('Sheets POST error:', err); }
- 
+
   // Update local state
   if (!signupData[currentSlot.id]) signupData[currentSlot.id] = { main: [], standby: [] };
   signupData[currentSlot.id][currentType].push(payload);
   allSignups.push(payload);
   localStorage.removeItem(CACHE_KEY);
- 
+
   // Send confirmation email
   try {
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
@@ -561,7 +571,7 @@ async function submitSignup() {
       booking_type: payload.type, location, age, phone,
     });
   } catch (err) { console.warn('EmailJS error:', err); }
- 
+
   document.getElementById('form-area').style.display = 'none';
   const isMain = currentType === 'main';
   document.getElementById('success-title').textContent = isMain ? "You're confirmed!" : "You're on standby!";
@@ -572,7 +582,7 @@ async function submitSignup() {
   document.getElementById('success-panel').classList.add('show');
   renderSlots();
 }
- 
+
 // ── ADMIN ──────────────────────────────────────────────
 function showAdmin() {
   document.getElementById('main-hero').style.display = 'none';
@@ -589,7 +599,7 @@ function showMain() {
   window.location.hash = '';
 }
 async function loadAdminData() { await loadSignups(true); renderAdminTable(); }
- 
+
 function renderAdminTable() {
   const statsEl = document.getElementById('admin-stats');
   const tbody = document.getElementById('admin-tbody');
@@ -611,11 +621,11 @@ function renderAdminTable() {
     </tr>`;
   }).join('');
 }
- 
+
 function showResetConfirm() { document.getElementById('admin-confirm').classList.add('show'); }
 function hideResetConfirm() { document.getElementById('admin-confirm').classList.remove('show'); }
 function confirmReset() { localStorage.removeItem(CACHE_KEY); buildState([]); hideResetConfirm(); renderAdminTable(); renderSlots(); alert('Cache cleared.'); }
- 
+
 function exportCSV() {
   const rows = [['#','Name','Age','Location','Phone','Email','Date','Time','Type','Registered']];
   allSignups.forEach((r,i) => rows.push([i+1,r.name||'',r.age||'',r.location||'',r.phone||'',r.email||'',r.date||'',r.time||'',r.type||'',r.timestamp||'']));
@@ -624,7 +634,7 @@ function exportCSV() {
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
   a.download = 'sadia-khan-signups.csv'; a.click();
 }
- 
+
 function checkHash() { if (window.location.hash === '#admin') showAdmin(); }
 window.addEventListener('hashchange', checkHash);
 checkHash();
@@ -632,4 +642,3 @@ if (window.location.hash !== '#admin') loadSignups();
 </script>
 </body>
 </html>
- 
