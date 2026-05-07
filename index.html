@@ -374,16 +374,30 @@ async function loadSignups(forceRefresh = false) {
   hidePageLoading();
 }
 
+// Map Google Sheets date objects back to slot date strings
+function normalizeDate(val) {
+  if (!val) return '';
+  const s = val.toString().trim();
+  // If it looks like a JS date string e.g. "Mon May 11 2026 00:00:00 GMT-0400"
+  if (s.includes('GMT') || s.includes('2026')) {
+    const d = new Date(s);
+    if (!isNaN(d)) {
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+    }
+  }
+  return s;
+}
+
 function buildState(rows) {
   signupData = {}; allSignups = rows;
   SLOTS.forEach(s => { signupData[s.id] = { main: [], standby: [] }; });
   rows.forEach(row => {
-    // Fuzzy match: normalize both sides for comparison
-    const rowDate = (row.date || '').trim();
-    const rowTime = (row.time || '').trim();
+    const rowDate = normalizeDate(row.date);
+    const rowTime = (row.time || '').toString().trim();
     const slot = SLOTS.find(s => {
       const dateMatch = s.date === rowDate;
-      // Time may be truncated in sheet (e.g. "12:00 PM - 1:00" vs "12:00 PM - 1:00 PM")
       const timeMatch = s.time === rowTime ||
         s.time.startsWith(rowTime) ||
         rowTime.startsWith(s.time.substring(0, 8));
