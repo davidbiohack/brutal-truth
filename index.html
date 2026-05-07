@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sadia Khan — Show Signup</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -14,7 +15,13 @@
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; overflow-x: hidden; }
-
+ 
+  /* PAGE LOADING */
+  .page-loading { position: fixed; inset: 0; background: var(--cream); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity 0.4s; }
+  .page-loading.hidden { opacity: 0; pointer-events: none; }
+  .page-loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .page-loading p { font-size: 13px; color: #8A7F74; }
+ 
   /* HERO */
   .hero { background: var(--charcoal); color: var(--cream); padding: 64px 40px 56px; text-align: center; position: relative; overflow: hidden; }
   .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 30%, rgba(196,154,74,0.18) 0%, transparent 70%), radial-gradient(ellipse at 20% 80%, rgba(212,168,154,0.12) 0%, transparent 60%); pointer-events: none; }
@@ -24,52 +31,82 @@
   .hero-sub { font-size: 15px; font-weight: 300; color: #B8AFA5; max-width: 480px; margin: 0 auto 32px; line-height: 1.65; }
   .riverside-banner { display: inline-flex; align-items: center; gap: 10px; background: rgba(196,154,74,0.15); border: 1px solid rgba(196,154,74,0.4); border-radius: 50px; padding: 10px 22px; font-size: 13px; color: var(--gold-light); text-decoration: none; transition: background 0.2s, border-color 0.2s; }
   .riverside-banner:hover { background: rgba(196,154,74,0.25); border-color: rgba(196,154,74,0.7); }
-
+ 
   /* LAYOUT */
   .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
   .section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 300; color: var(--charcoal); margin-bottom: 6px; }
   .section-sub { font-size: 13px; color: #8A7F74; margin-bottom: 28px; }
-
-  /* HOW IT WORKS BANNER */
-  .how-it-works { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 22px; margin-bottom: 32px; display: flex; gap: 24px; flex-wrap: wrap; }
-  .how-step { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 180px; }
-  .how-num { width: 24px; height: 24px; border-radius: 50%; background: var(--charcoal); color: var(--cream); font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-  .how-text { font-size: 12px; color: #6A6058; line-height: 1.5; }
-  .how-text strong { display: block; color: var(--charcoal); font-size: 13px; margin-bottom: 2px; }
-
+ 
   /* SLOTS */
-  .slots-section { padding: 48px 0 24px; }
+  .slots-section { padding: 56px 0 24px; }
   .day-group { margin-bottom: 40px; }
   .day-label { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
-  .slot-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; transition: box-shadow 0.2s, border-color 0.2s; }
-  .slot-card:hover:not(.slot-full) { box-shadow: 0 4px 20px var(--shadow); border-color: #C8BFB3; }
-  .slot-card.slot-full { opacity: 0.7; }
+  .slot-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: start; transition: box-shadow 0.2s, border-color 0.2s; }
+  .slot-card:hover { box-shadow: 0 4px 20px var(--shadow); border-color: #C8BFB3; }
   .slot-time { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 400; color: var(--charcoal); margin-bottom: 6px; }
-  .slot-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .slot-meta { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; border-radius: 50px; padding: 3px 10px; }
-  .pill-open { background: #EAF0E5; color: var(--sage); }
+  .pill-main { background: #EAF0E5; color: var(--sage); }
   .pill-standby { background: #F4ECE8; color: var(--blush); }
-  .pill-full { background: #ECEAE7; color: #888; }
+  .pill-full { background: #EEE; color: #888; }
   .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .slot-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-
-  .btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 9px 18px; cursor: pointer; transition: all 0.18s; white-space: nowrap; letter-spacing: 0.03em; text-decoration: none; display: inline-block; text-align: center; }
+  .btn { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 9px 18px; cursor: pointer; transition: all 0.18s; white-space: nowrap; letter-spacing: 0.03em; }
   .btn-primary { background: var(--charcoal); color: var(--cream); }
   .btn-primary:hover { background: #2E2B27; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(28,26,23,0.3); }
   .btn-standby { background: transparent; color: var(--blush); border: 1px solid var(--blush); }
-  .btn-standby:hover { background: #F4ECE8; transform: translateY(-1px); }
-  .btn-disabled { background: #ECEAE7; color: #A9A09A; cursor: not-allowed; pointer-events: none; }
-
-  /* SPOTS PIPS */
-  .spots-row { display: flex; gap: 5px; margin-top: 8px; align-items: center; }
-  .spot-pip { width: 10px; height: 10px; border-radius: 50%; background: #D3CDCA; }
+  .btn-standby:hover { background: #F4ECE8; }
+  .btn-disabled { background: #ECEAE7; color: #A9A09A; cursor: not-allowed; }
+  .spots-row { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+  .spot-pip { width: 10px; height: 10px; border-radius: 50%; background: #D3CDCA; transition: background 0.3s; }
   .spot-pip.filled { background: var(--sage); }
-  .spot-pip.standby-filled { background: var(--blush); }
-  .spots-divider { width: 8px; }
-
-  /* GOOGLE FORM NOTE */
-  .form-note { display: flex; align-items: flex-start; gap: 8px; background: rgba(196,154,74,0.07); border: 1px solid rgba(196,154,74,0.2); border-radius: 8px; padding: 10px 13px; font-size: 12px; color: #7A6A50; line-height: 1.5; margin-bottom: 28px; }
-
+  .spot-pip.standby { background: var(--blush); }
+  .last-updated { font-size: 11px; color: #B0A89F; margin-bottom: 24px; display: flex; align-items: center; gap: 6px; }
+  .refresh-btn { background: none; border: none; cursor: pointer; color: var(--gold); font-size: 11px; font-family: 'DM Sans', sans-serif; padding: 0; text-decoration: underline; }
+ 
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(28,26,23,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--warm-white); border-radius: 16px; padding: 40px; width: 100%; max-width: 480px; box-shadow: 0 24px 60px rgba(28,26,23,0.25); animation: slideUp 0.28s cubic-bezier(0.16,1,0.3,1); position: relative; margin: auto; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-close { position: absolute; top: 18px; right: 18px; background: none; border: none; cursor: pointer; color: #A09890; font-size: 22px; line-height: 1; transition: color 0.15s; }
+  .modal-close:hover { color: var(--charcoal); }
+  .modal-eyebrow { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 500; margin-bottom: 8px; }
+  .modal h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; margin-bottom: 6px; }
+  .modal-slot-info { font-size: 13px; color: #8A7F74; margin-bottom: 16px; }
+  .modal-type-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; padding: 4px 12px; border-radius: 50px; margin-bottom: 20px; }
+  .modal-type-tag.main { background: #EAF0E5; color: var(--sage); }
+  .modal-type-tag.standby { background: #F4ECE8; color: var(--blush); }
+  .field { margin-bottom: 15px; }
+  .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #8A7F74; margin-bottom: 6px; }
+  .field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--charcoal); background: var(--cream); outline: none; transition: border-color 0.2s; }
+  .field input:focus { border-color: var(--gold); }
+  .field input.error { border-color: #C06060; }
+  .error-msg { font-size: 11px; color: #C06060; margin-top: 4px; }
+  .phone-row { display: grid; grid-template-columns: 100px 1fr; gap: 8px; }
+  .field-hint { font-size: 11px; color: #9A9189; margin-top: 4px; }
+  .email-note { display: flex; align-items: flex-start; gap: 8px; background: rgba(196,154,74,0.08); border: 1px solid rgba(196,154,74,0.25); border-radius: 8px; padding: 10px 13px; font-size: 12px; color: #7A6A50; line-height: 1.5; margin-bottom: 18px; }
+  .email-note svg { flex-shrink: 0; margin-top: 1px; }
+  .duplicate-error { display: none; background: #FFF0F0; border: 1px solid #E08080; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #7A1A1A; margin-bottom: 14px; line-height: 1.5; }
+  .duplicate-error.show { display: block; }
+ 
+  .btn-submit { width: 100%; padding: 13px; background: var(--charcoal); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border: none; border-radius: 8px; cursor: pointer; transition: all 0.18s; margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-submit:hover:not(:disabled) { background: #2E2B27; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(28,26,23,0.25); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .btn-submit.loading .spinner { display: inline-block; }
+ 
+  .success-panel { display: none; text-align: center; padding: 8px 0 4px; }
+  .success-panel.show { display: block; animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .success-icon { width: 52px; height: 52px; background: #EAF0E5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 22px; }
+  .success-panel h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; color: var(--charcoal); margin-bottom: 8px; }
+  .success-panel p { font-size: 13px; color: #6A6058; line-height: 1.6; }
+  .email-highlight { display: inline-block; background: #EAF0E5; color: var(--sage); border-radius: 4px; padding: 2px 9px; font-weight: 500; margin-top: 6px; font-size: 13px; }
+  .btn-done { margin-top: 20px; background: var(--charcoal); color: var(--cream); width: 100%; padding: 11px; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; }
+  .btn-done:hover { background: #2E2B27; }
+ 
   /* RIVERSIDE */
   .riverside-section { padding: 48px 0 64px; border-top: 1px solid var(--border); }
   .riverside-card { background: var(--charcoal); border-radius: 14px; padding: 36px 40px; display: flex; align-items: center; gap: 32px; color: var(--cream); flex-wrap: wrap; }
@@ -79,10 +116,9 @@
   .riverside-card-text p { font-size: 13px; color: #9A9189; line-height: 1.5; }
   .btn-riverside { background: var(--gold); color: var(--charcoal); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.18s; }
   .btn-riverside:hover { background: var(--gold-light); transform: translateY(-1px); }
-
   .footer { text-align: center; padding: 24px; font-size: 12px; color: #B0A89F; border-top: 1px solid var(--border); }
-
-  /* ADMIN PANEL */
+ 
+  /* ADMIN */
   #admin-panel { display: none; }
   #admin-panel.visible { display: block; }
   .admin-hero { background: #1A1008; color: var(--cream); padding: 40px; text-align: center; border-bottom: 2px solid var(--gold); }
@@ -90,35 +126,50 @@
   .admin-hero p { font-size: 13px; color: #9A9189; }
   .admin-container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
   .admin-section-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; margin-bottom: 16px; color: var(--charcoal); }
-  .admin-info { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 28px; font-size: 13px; color: #6A6058; line-height: 1.7; }
-  .admin-info strong { color: var(--charcoal); }
-  .admin-info a { color: var(--gold); font-weight: 500; }
-  .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
-  .btn-sheets { background: #1E6B3C; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; text-decoration: none; display: inline-block; transition: background 0.18s; }
-  .btn-sheets:hover { background: #155430; }
+  .admin-table-wrap { overflow-x: auto; margin-bottom: 40px; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: var(--charcoal); color: var(--cream); padding: 10px 14px; text-align: left; font-weight: 500; letter-spacing: 0.05em; font-size: 11px; text-transform: uppercase; }
+  tbody tr:nth-child(even) { background: var(--warm-white); }
+  tbody tr:hover { background: #EDE8E2; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--charcoal); vertical-align: middle; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .badge-guest { background: #EAF0E5; color: var(--sage); }
+  .badge-standby { background: #F4ECE8; color: var(--blush); }
+  .admin-empty { text-align: center; padding: 40px; color: #A09890; font-size: 14px; }
+  .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+  .btn-danger { background: #8B2020; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; }
+  .btn-danger:hover { background: #A02828; }
+  .btn-export { background: var(--sage); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; }
+  .btn-export:hover { background: #6A7C5E; }
   .btn-back { background: var(--charcoal); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; text-decoration: none; display: inline-block; }
   .btn-back:hover { background: #2E2B27; }
-  .slot-summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 40px; }
-  .slot-summary-card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-  .slot-summary-card .ss-date { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
-  .slot-summary-card .ss-time { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 400; color: var(--charcoal); margin-bottom: 10px; }
-  .ss-bar { display: flex; gap: 6px; align-items: center; font-size: 12px; color: #6A6058; margin-bottom: 4px; }
-  .ss-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .ss-dot.guest { background: var(--sage); }
-  .ss-dot.standby { background: var(--blush); }
-  .ss-dot.empty { background: #D3CDCA; }
-
+  .btn-refresh-admin { background: rgba(196,154,74,0.15); color: var(--gold); border: 1px solid rgba(196,154,74,0.4); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; border-radius: 6px; padding: 10px 20px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; }
+  .btn-refresh-admin:hover { background: rgba(196,154,74,0.25); }
+  .admin-confirm { display: none; background: #FFF0F0; border: 1px solid #E08080; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; font-size: 13px; color: #6A1A1A; line-height: 1.6; }
+  .admin-confirm.show { display: block; }
+  .admin-confirm strong { display: block; margin-bottom: 8px; font-size: 14px; }
+  .admin-stats-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+  .admin-stat { display: flex; flex-direction: column; background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 16px 22px; min-width: 120px; }
+  .admin-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--charcoal); line-height: 1; }
+  .admin-stat-label { font-size: 11px; color: #8A7F74; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+ 
   @media (max-width: 600px) {
     .slot-card { grid-template-columns: 1fr; }
-    .slot-actions { flex-direction: row; flex-wrap: wrap; }
+    .slot-actions { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+    .modal { padding: 28px 20px; }
     .riverside-card { padding: 28px 24px; }
     .hero { padding: 48px 24px 44px; }
-    .how-it-works { gap: 14px; }
+    .phone-row { grid-template-columns: 85px 1fr; }
   }
 </style>
 </head>
 <body>
-
+ 
+<div class="page-loading" id="page-loading">
+  <div class="page-loading-spinner"></div>
+  <p>Loading available slots…</p>
+</div>
+ 
 <header class="hero" id="main-hero">
   <div class="hero-eyebrow">Now Booking Guests</div>
   <h1>Join <em>Sadia Khan's</em><br>Show</h1>
@@ -128,35 +179,18 @@
     Recording via Riverside.fm — link sent upon confirmation
   </a>
 </header>
-
+ 
 <main class="container" id="main-container">
   <section class="slots-section">
     <p class="section-title">Available Sessions</p>
     <p class="section-sub">May 11–15, 2026 &nbsp;·&nbsp; 3 guests per slot &nbsp;·&nbsp; 2 standby positions</p>
-
-    <div class="how-it-works">
-      <div class="how-step">
-        <div class="how-num">1</div>
-        <div class="how-text"><strong>Choose your slot</strong>Click Book or Join Standby below</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">2</div>
-        <div class="how-text"><strong>Fill in your details</strong>A Google Form opens with your slot pre-selected</div>
-      </div>
-      <div class="how-step">
-        <div class="how-num">3</div>
-        <div class="how-text"><strong>Submit & you're in</strong>You'll receive a confirmation email shortly</div>
-      </div>
+    <div class="last-updated" id="last-updated-row" style="display:none;">
+      <span id="last-updated-text"></span>
+      <button class="refresh-btn" onclick="loadSignups(true)">↻ Refresh</button>
     </div>
-
-    <div class="form-note">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C49A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Slot counts update when you refresh. Once you submit the form your spot is reserved — each person may only apply once.
-    </div>
-
     <div id="slots-container"></div>
   </section>
-
+ 
   <section class="riverside-section">
     <div class="riverside-card">
       <div class="riverside-card-icon">
@@ -170,186 +204,382 @@
     </div>
   </section>
 </main>
-
+ 
 <footer class="footer" id="main-footer">© 2026 Sadia Khan Show · All signups are reviewed before confirmation</footer>
-
-<!-- ADMIN PANEL (access via yourpage.html#admin) -->
+ 
+<!-- ADMIN PANEL -->
 <div id="admin-panel">
   <div class="admin-hero">
     <h2>Admin Dashboard</h2>
-    <p>Sadia Khan Show · Signups live in Google Sheets</p>
+    <p>Sadia Khan Show · Live from Google Sheets</p>
   </div>
   <div class="admin-container">
-    <div class="admin-info">
-      <strong>All signups are stored directly in your Google Sheet.</strong><br>
-      Click the button below to open it. You'll see every guest's name, age, location, phone, email, time slot, and whether they're a confirmed guest or standby — one row per submission, in real time.
-    </div>
+    <div class="admin-stats-row" id="admin-stats"></div>
     <div class="admin-actions">
-      <a class="btn-sheets" href="https://docs.google.com/spreadsheets" target="_blank">📊 Open Google Sheets</a>
-      <a class="btn-back" href="javascript:void(0)" onclick="showMain()">← Back to Signup Page</a>
+      <button class="btn-refresh-admin" onclick="loadAdminData()">↻ Refresh</button>
+      <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-danger" onclick="showResetConfirm()">🗑 Reset All Signups</button>
+      <a class="btn-back" href="javascript:void(0)" onclick="showMain()">← Back</a>
     </div>
-
-    <p class="admin-section-title">Slot Overview</p>
-    <p style="font-size:13px;color:#8A7F74;margin-bottom:20px;">
-      Slot counts below are tracked locally in this browser as a visual guide.
-      The authoritative list is always in your Google Sheet.
-    </p>
-    <div class="slot-summary-grid" id="slot-summary"></div>
+    <div class="admin-confirm" id="admin-confirm">
+      <strong>⚠️ Are you sure?</strong>
+      This clears all signups from this browser cache. Your Google Sheet is NOT affected.
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <button class="btn-danger" onclick="confirmReset()">Yes, reset</button>
+        <button class="btn-back" onclick="hideResetConfirm()">Cancel</button>
+      </div>
+    </div>
+    <p class="admin-section-title">All Signups</p>
+    <div class="admin-table-wrap">
+      <table id="admin-table">
+        <thead>
+          <tr><th>#</th><th>Name</th><th>Age</th><th>Location</th><th>Phone</th><th>Email</th><th>Date</th><th>Time</th><th>Type</th><th>Registered</th></tr>
+        </thead>
+        <tbody id="admin-tbody"></tbody>
+      </table>
+    </div>
   </div>
 </div>
-
+ 
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-eyebrow">Guest Signup</div>
+    <h2 id="modal-title">Reserve Your Spot</h2>
+    <div class="modal-slot-info" id="modal-slot-info"></div>
+    <div class="modal-type-tag" id="modal-type-tag"></div>
+    <div id="form-area">
+      <div class="duplicate-error" id="duplicate-error"></div>
+      <div class="field">
+        <label>Full Name *</label>
+        <input type="text" id="inp-name" placeholder="Your full name">
+        <div class="error-msg" id="err-name"></div>
+      </div>
+      <div class="field">
+        <label>Age *</label>
+        <input type="number" id="inp-age" placeholder="Your age" min="18" max="99">
+        <div class="error-msg" id="err-age"></div>
+      </div>
+      <div class="field">
+        <label>Location *</label>
+        <input type="text" id="inp-location" placeholder="City, Country">
+        <div class="error-msg" id="err-location"></div>
+      </div>
+      <div class="field">
+        <label>Phone Number *</label>
+        <div class="phone-row">
+          <input type="text" id="inp-cc" placeholder="+1" maxlength="6">
+          <input type="tel" id="inp-phone" placeholder="3055551234">
+        </div>
+        <div class="field-hint">Include country code (e.g. +1 US, +44 UK)</div>
+        <div class="error-msg" id="err-phone"></div>
+      </div>
+      <div class="field">
+        <label>Email Address *</label>
+        <input type="email" id="inp-email" placeholder="you@example.com">
+        <div class="error-msg" id="err-email"></div>
+      </div>
+      <div class="email-note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C49A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        A confirmation email will be sent with your session details and Riverside link.
+      </div>
+      <button class="btn-submit" id="submit-btn" onclick="submitSignup()">
+        <span class="spinner"></span>
+        <span id="submit-label">Confirm My Spot</span>
+      </button>
+    </div>
+    <div class="success-panel" id="success-panel">
+      <div class="success-icon">✓</div>
+      <h3 id="success-title">You're confirmed!</h3>
+      <p id="success-msg"></p>
+      <p style="margin-top:12px;font-size:13px;color:#8A7F74;">Confirmation sent to</p>
+      <div class="email-highlight" id="success-email"></div>
+      <button class="btn-done" onclick="closeModal()">Done</button>
+    </div>
+  </div>
+</div>
+ 
 <script>
 // ═══════════════════════════════════════════════════════
-//  GOOGLE FORM FIELD IDs (extracted from your pre-fill URL)
+const APPS_SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycbz7v00VHereBHMyJtAtVIQwJTk-RDyNfPcUuuWaJrjDBo_wdLjqlT34u80FvpkKjneA/exec';
+const EMAILJS_PUBLIC_KEY  = '44u1NjtmsvSQxjGh7';
+const EMAILJS_SERVICE_ID  = 'service_s7tsojm';
+const EMAILJS_TEMPLATE_ID = 'template_x6b4k4t';
 // ═══════════════════════════════════════════════════════
-const FORM_BASE = 'https://docs.google.com/forms/d/e/1FAIpQLSdDpTYEVDKrEPnESX0eh1-WKsAa_spA6g7Z0mn95ByS4pFn8g/viewform';
-const ENTRY = {
-  name:     'entry.1570176404',
-  age:      'entry.811507802',
-  location: 'entry.1451751043',
-  phone:    'entry.1179774553',
-  email:    'entry.1031767415',
-  slot:     'entry.621276428',
-  role:     'entry.1400839026',
-};
-
-// ── SLOTS ─────────────────────────────────────────────
-// formLabel must match EXACTLY what's in the Google Form dropdown
+ 
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+ 
 const SLOTS = [
-  { id: 's1',  date: 'Monday, May 11',    time: '12:00 PM – 1:00 PM', formLabel: 'Monday, May 11 — 12:00 PM – 1:00 PM' },
-  { id: 's2',  date: 'Monday, May 11',    time: '1:30 PM – 2:30 PM',  formLabel: 'Monday, May 11 — 1:30 PM – 2:30 PM'  },
-  { id: 's3',  date: 'Tuesday, May 12',   time: '12:00 PM – 1:00 PM', formLabel: 'Tuesday, May 12 — 12:00 PM – 1:00 PM' },
-  { id: 's4',  date: 'Tuesday, May 12',   time: '1:30 PM – 2:30 PM',  formLabel: 'Tuesday, May 12 — 1:30 PM – 2:30 PM'  },
-  { id: 's5',  date: 'Wednesday, May 13', time: '12:00 PM – 1:00 PM', formLabel: 'Wednesday, May 13 — 12:00 PM – 1:00 PM' },
-  { id: 's6',  date: 'Wednesday, May 13', time: '1:30 PM – 2:30 PM',  formLabel: 'Wednesday, May 13 — 1:30 PM – 2:30 PM'  },
-  { id: 's7',  date: 'Thursday, May 14',  time: '12:00 PM – 1:00 PM', formLabel: 'Thursday, May 14 — 12:00 PM – 1:00 PM' },
-  { id: 's8',  date: 'Thursday, May 14',  time: '1:30 PM – 2:30 PM',  formLabel: 'Thursday, May 14 — 1:30 PM – 2:30 PM'  },
-  { id: 's9',  date: 'Friday, May 15',    time: '12:00 PM – 1:00 PM', formLabel: 'Friday, May 15 — 12:00 PM – 1:00 PM' },
-  { id: 's10', date: 'Friday, May 15',    time: '1:30 PM – 2:30 PM',  formLabel: 'Friday, May 15 — 1:30 PM – 2:30 PM'  },
+  { id: 's1',  date: 'Monday, May 11',    time: '12:00 PM – 1:00 PM' },
+  { id: 's2',  date: 'Monday, May 11',    time: '1:30 PM – 2:30 PM'  },
+  { id: 's3',  date: 'Tuesday, May 12',   time: '12:00 PM – 1:00 PM' },
+  { id: 's4',  date: 'Tuesday, May 12',   time: '1:30 PM – 2:30 PM'  },
+  { id: 's5',  date: 'Wednesday, May 13', time: '12:00 PM – 1:00 PM' },
+  { id: 's6',  date: 'Wednesday, May 13', time: '1:30 PM – 2:30 PM'  },
+  { id: 's7',  date: 'Thursday, May 14',  time: '12:00 PM – 1:00 PM' },
+  { id: 's8',  date: 'Thursday, May 14',  time: '1:30 PM – 2:30 PM'  },
+  { id: 's9',  date: 'Friday, May 15',    time: '12:00 PM – 1:00 PM' },
+  { id: 's10', date: 'Friday, May 15',    time: '1:30 PM – 2:30 PM'  },
 ];
-
-const MAX_MAIN    = 3;
-const MAX_STANDBY = 2;
-const COUNTS_KEY  = 'sadia_counts_v4';
-
-// ── SLOT COUNTS (local visual tracker) ────────────────
-function getCounts() {
-  try { return JSON.parse(localStorage.getItem(COUNTS_KEY)) || {}; } catch { return {}; }
+ 
+const MAX_MAIN = 3, MAX_STANDBY = 2, CACHE_KEY = 'sadia_cache_v5';
+ 
+let signupData = {}, allSignups = [];
+ 
+// ── CACHE ──────────────────────────────────────────────
+function readCache() {
+  try {
+    const c = JSON.parse(localStorage.getItem(CACHE_KEY));
+    if (c && Date.now() - c.ts < 60000) return c;
+  } catch {}
+  return null;
 }
-function saveCounts(c) { localStorage.setItem(COUNTS_KEY, JSON.stringify(c)); }
-function getSlotCounts(id) {
-  return getCounts()[id] || { main: 0, standby: 0 };
+function writeCache() {
+  localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: signupData, flat: allSignups }));
 }
-
-// ── BUILD PRE-FILLED FORM URL ──────────────────────────
-function formURL(slot, role) {
-  const params = new URLSearchParams();
-  params.set('usp', 'pp_url');
-  params.set(ENTRY.slot, slot.formLabel);
-  params.set(ENTRY.role, role); // 'Guest' or 'Standby'
-  return FORM_BASE + '?' + params.toString();
+ 
+// ── JSONP FETCH ────────────────────────────────────────
+function jsonpFetch(url) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_cb_' + Date.now();
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => { cleanup(); reject(new Error('timeout')); }, 10000);
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+    function cleanup() { clearTimeout(timeout); delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script); }
+    script.onerror = () => { cleanup(); reject(new Error('script error')); };
+    script.src = url + '?callback=' + cbName;
+    document.head.appendChild(script);
+  });
 }
-
-// ── RENDER SLOTS ───────────────────────────────────────
+ 
+// ── LOAD ───────────────────────────────────────────────
+async function loadSignups(forceRefresh = false) {
+  const cached = readCache();
+  if (!forceRefresh && cached) {
+    signupData = cached.data; allSignups = cached.flat;
+    renderSlots(); showLastUpdated(new Date(cached.ts)); hidePageLoading(); return;
+  }
+  try {
+    const json = await jsonpFetch(APPS_SCRIPT_URL);
+    buildState(json.signups || []);
+    writeCache(); renderSlots(); showLastUpdated(new Date());
+  } catch (err) {
+    console.warn('Sheets load failed:', err);
+    if (cached) { signupData = cached.data; allSignups = cached.flat; }
+    else buildState([]);
+    renderSlots();
+    showLastUpdated(cached ? new Date(cached.ts) : null);
+  }
+  hidePageLoading();
+}
+ 
+function buildState(rows) {
+  signupData = {}; allSignups = rows;
+  SLOTS.forEach(s => { signupData[s.id] = { main: [], standby: [] }; });
+  rows.forEach(row => {
+    const slot = SLOTS.find(s => s.date === row.date && s.time === row.time);
+    if (!slot) return;
+    const type = (row.type || '').toLowerCase().includes('standby') ? 'standby' : 'main';
+    signupData[slot.id][type].push(row);
+  });
+}
+ 
+function hidePageLoading() {
+  const el = document.getElementById('page-loading');
+  el.classList.add('hidden');
+  setTimeout(() => el.style.display = 'none', 400);
+}
+ 
+function showLastUpdated(date) {
+  document.getElementById('last-updated-row').style.display = 'flex';
+  document.getElementById('last-updated-text').textContent = date
+    ? `Slots last updated ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+    : 'Could not connect — showing cached data';
+}
+ 
+// ── RENDER ─────────────────────────────────────────────
 function renderSlots() {
   const container = document.getElementById('slots-container');
   const grouped = {};
   SLOTS.forEach(s => { if (!grouped[s.date]) grouped[s.date] = []; grouped[s.date].push(s); });
   container.innerHTML = '';
   Object.entries(grouped).forEach(([date, slots]) => {
-    const day = document.createElement('div');
-    day.className = 'day-group';
+    const day = document.createElement('div'); day.className = 'day-group';
     day.innerHTML = `<div class="day-label">${date}</div>`;
     slots.forEach(s => day.appendChild(buildSlotCard(s)));
     container.appendChild(day);
   });
 }
-
+ 
 function buildSlotCard(slot) {
-  const c = getSlotCounts(slot.id);
-  const mc = c.main, sc = c.standby;
+  const data = signupData[slot.id] || { main: [], standby: [] };
+  const mc = data.main.length, sc = data.standby.length;
   const mf = mc >= MAX_MAIN, sf = sc >= MAX_STANDBY;
-
   const card = document.createElement('div');
-  card.className = 'slot-card' + (mf && sf ? ' slot-full' : '');
-  card.id = `card-${slot.id}`;
-
-  // Left side
+  card.className = 'slot-card'; card.id = `card-${slot.id}`;
   const left = document.createElement('div');
   left.innerHTML = `<div class="slot-time">${slot.time}</div>`;
-
   const meta = document.createElement('div'); meta.className = 'slot-meta';
-  const mp = document.createElement('span');
-  mp.className = `pill ${mf ? 'pill-full' : 'pill-open'}`;
+  const mp = document.createElement('span'); mp.className = `pill ${mf ? 'pill-full' : 'pill-main'}`;
   mp.innerHTML = `<span class="dot"></span>${mc}/${MAX_MAIN} Guests`;
-  const sp = document.createElement('span');
-  sp.className = `pill ${sf ? 'pill-full' : 'pill-standby'}`;
+  const sp = document.createElement('span'); sp.className = `pill ${sf ? 'pill-full' : 'pill-standby'}`;
   sp.innerHTML = `<span class="dot"></span>${sc}/${MAX_STANDBY} Standby`;
-  meta.appendChild(mp); meta.appendChild(sp);
-  left.appendChild(meta);
-
-  // Pip indicators
+  meta.appendChild(mp); meta.appendChild(sp); left.appendChild(meta);
   const pips = document.createElement('div'); pips.className = 'spots-row';
-  for (let i = 0; i < MAX_MAIN; i++) {
-    const p = document.createElement('div');
-    p.className = 'spot-pip' + (i < mc ? ' filled' : '');
-    pips.appendChild(p);
-  }
-  const div = document.createElement('div'); div.className = 'spots-divider'; pips.appendChild(div);
-  for (let i = 0; i < MAX_STANDBY; i++) {
-    const p = document.createElement('div');
-    p.className = 'spot-pip' + (i < sc ? ' standby-filled' : '');
-    pips.appendChild(p);
-  }
+  for (let i = 0; i < MAX_MAIN; i++) { const p = document.createElement('div'); p.className = 'spot-pip' + (i < mc ? ' filled' : ''); pips.appendChild(p); }
+  const g = document.createElement('div'); g.style.width = '8px'; pips.appendChild(g);
+  for (let i = 0; i < MAX_STANDBY; i++) { const p = document.createElement('div'); p.className = 'spot-pip' + (i < sc ? ' standby' : ''); pips.appendChild(p); }
   left.appendChild(pips);
-
-  // Right side — buttons open pre-filled Google Form
   const right = document.createElement('div'); right.className = 'slot-actions';
-
   if (!mf) {
-    const a = document.createElement('a');
-    a.className = 'btn btn-primary';
-    a.textContent = 'Book This Slot';
-    a.href = formURL(slot, 'Guest');
-    a.target = '_blank';
-    a.addEventListener('click', () => incrementCount(slot.id, 'main'));
-    right.appendChild(a);
+    const b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Book This Slot'; b.onclick = () => openModal(slot, 'main'); right.appendChild(b);
   } else if (!sf) {
-    const fb = document.createElement('span'); fb.className = 'btn btn-disabled'; fb.textContent = 'Slot Full';
-    const sb = document.createElement('a');
-    sb.className = 'btn btn-standby';
-    sb.textContent = 'Join Standby';
-    sb.href = formURL(slot, 'Standby');
-    sb.target = '_blank';
-    sb.addEventListener('click', () => incrementCount(slot.id, 'standby'));
+    const fb = document.createElement('button'); fb.className = 'btn btn-disabled'; fb.textContent = 'Slot Full'; fb.disabled = true;
+    const sb = document.createElement('button'); sb.className = 'btn btn-standby'; sb.textContent = 'Join Standby'; sb.onclick = () => openModal(slot, 'standby');
     right.appendChild(fb); right.appendChild(sb);
   } else {
-    const fb = document.createElement('span'); fb.className = 'btn btn-disabled'; fb.textContent = 'Fully Booked';
-    right.appendChild(fb);
+    const fb = document.createElement('button'); fb.className = 'btn btn-disabled'; fb.textContent = 'Fully Booked'; fb.disabled = true; right.appendChild(fb);
   }
-
   card.appendChild(left); card.appendChild(right);
   return card;
 }
-
-// Optimistically increment local count when someone clicks
-function incrementCount(slotId, type) {
-  const counts = getCounts();
-  if (!counts[slotId]) counts[slotId] = { main: 0, standby: 0 };
-  if (type === 'main' && counts[slotId].main < MAX_MAIN) counts[slotId].main++;
-  if (type === 'standby' && counts[slotId].standby < MAX_STANDBY) counts[slotId].standby++;
-  saveCounts(counts);
-  // Re-render after short delay so form has time to open first
-  setTimeout(renderSlots, 300);
+ 
+// ── MODAL ──────────────────────────────────────────────
+let currentSlot = null, currentType = null;
+ 
+function openModal(slot, type) {
+  currentSlot = slot; currentType = type;
+  document.getElementById('modal-title').textContent = type === 'main' ? 'Reserve Your Spot' : 'Join the Standby List';
+  document.getElementById('modal-slot-info').textContent = `${slot.date} · ${slot.time}`;
+  const tag = document.getElementById('modal-type-tag');
+  tag.className = `modal-type-tag ${type}`;
+  tag.textContent = type === 'main' ? '✦ Guest Seat' : '◇ Standby Position';
+  ['name','age','location','cc','phone','email'].forEach(f => { const el = document.getElementById(`inp-${f}`); if (el) { el.value = ''; el.classList.remove('error'); } });
+  ['name','age','location','phone','email'].forEach(f => { const er = document.getElementById(`err-${f}`); if (er) er.textContent = ''; });
+  document.getElementById('duplicate-error').classList.remove('show');
+  document.getElementById('form-area').style.display = '';
+  document.getElementById('success-panel').classList.remove('show');
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = false; btn.classList.remove('loading');
+  document.getElementById('submit-label').textContent = type === 'main' ? 'Confirm My Spot' : 'Join Standby List';
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-
+ 
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+ 
+// ── VALIDATE ───────────────────────────────────────────
+function setErr(f, m) { const el = document.getElementById(`inp-${f}`); if(el) el.classList.add('error'); const er = document.getElementById(`err-${f}`); if(er) er.textContent = m; }
+function clearErr(f) { const el = document.getElementById(`inp-${f}`); if(el) el.classList.remove('error'); const er = document.getElementById(`err-${f}`); if(er) er.textContent = ''; }
+ 
+function validate() {
+  let ok = true;
+  const name = document.getElementById('inp-name').value.trim();
+  if (!name || name.split(' ').filter(Boolean).length < 2) { setErr('name', 'Please enter your full name (first & last).'); ok = false; } else clearErr('name');
+  const age = parseInt(document.getElementById('inp-age').value.trim());
+  if (isNaN(age) || age < 18 || age > 99) { setErr('age', 'Please enter a valid age (18–99).'); ok = false; } else clearErr('age');
+  const loc = document.getElementById('inp-location').value.trim();
+  if (!loc) { setErr('location', 'Please enter your location.'); ok = false; } else clearErr('location');
+  const cc = document.getElementById('inp-cc').value.trim();
+  const ph = document.getElementById('inp-phone').value.trim();
+  if (!cc || !/^\+\d{1,4}$/.test(cc)) { setErr('phone', 'Enter a valid country code (e.g. +1, +44).'); ok = false; }
+  else if (!ph || !/^\d{6,15}$/.test(ph.replace(/[\s\-\(\)]/g, ''))) { setErr('phone', 'Enter a valid phone number.'); ok = false; }
+  else clearErr('phone');
+  const email = document.getElementById('inp-email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('email', 'Please enter a valid email address.'); ok = false; } else clearErr('email');
+  return ok;
+}
+ 
+// ── DUPLICATE CHECK ────────────────────────────────────
+function checkDuplicate(name, email, phone) {
+  const n = name.trim().toLowerCase(), e = email.trim().toLowerCase(), p = phone.replace(/[\s\-\(\)\+]/g,'');
+  for (const row of allSignups) {
+    if ((row.email||'').trim().toLowerCase() === e) return 'That email address has already been used to sign up.';
+    if ((row.name||'').trim().toLowerCase() === n) return 'That name has already been used to sign up.';
+    const rp = (row.phone||'').replace(/[\s\-\(\)\+]/g,'');
+    if (p && rp && rp === p) return 'That phone number has already been used to sign up.';
+  }
+  return null;
+}
+ 
+// ── SUBMIT ─────────────────────────────────────────────
+async function submitSignup() {
+  if (!validate()) return;
+  const name     = document.getElementById('inp-name').value.trim();
+  const age      = document.getElementById('inp-age').value.trim();
+  const location = document.getElementById('inp-location').value.trim();
+  const cc       = document.getElementById('inp-cc').value.trim();
+  const ph       = document.getElementById('inp-phone').value.trim();
+  const phone    = cc + ' ' + ph;
+  const email    = document.getElementById('inp-email').value.trim();
+ 
+  const dupErr = checkDuplicate(name, email, cc + ph.replace(/[\s\-\(\)]/g,''));
+  if (dupErr) {
+    const el = document.getElementById('duplicate-error');
+    el.textContent = '⚠️ ' + dupErr + ' Each person may only sign up once.';
+    el.classList.add('show'); return;
+  }
+  document.getElementById('duplicate-error').classList.remove('show');
+ 
+  const slotData = signupData[currentSlot.id] || { main: [], standby: [] };
+  if (currentType === 'main' && slotData.main.length >= MAX_MAIN) { alert('This slot just filled up. Please choose another.'); closeModal(); await loadSignups(true); return; }
+  if (currentType === 'standby' && slotData.standby.length >= MAX_STANDBY) { alert('Standby is full. Please choose another slot.'); closeModal(); await loadSignups(true); return; }
+ 
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.classList.add('loading');
+  document.getElementById('submit-label').textContent = 'Confirming…';
+ 
+  const payload = {
+    timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }),
+    name, age, location, phone, email,
+    date: currentSlot.date, time: currentSlot.time,
+    type: currentType === 'main' ? 'Confirmed Guest' : 'Standby',
+  };
+ 
+  // Write to Google Sheets
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch (err) { console.warn('Sheets POST error:', err); }
+ 
+  // Update local state
+  if (!signupData[currentSlot.id]) signupData[currentSlot.id] = { main: [], standby: [] };
+  signupData[currentSlot.id][currentType].push(payload);
+  allSignups.push(payload);
+  localStorage.removeItem(CACHE_KEY);
+ 
+  // Send confirmation email
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: email, to_name: name,
+      slot_date: currentSlot.date, slot_time: currentSlot.time,
+      booking_type: payload.type, location, age, phone,
+    });
+  } catch (err) { console.warn('EmailJS error:', err); }
+ 
+  document.getElementById('form-area').style.display = 'none';
+  const isMain = currentType === 'main';
+  document.getElementById('success-title').textContent = isMain ? "You're confirmed!" : "You're on standby!";
+  document.getElementById('success-msg').textContent = isMain
+    ? `Your guest spot for ${currentSlot.date}, ${currentSlot.time} is reserved. Your Riverside link will be included in your confirmation email.`
+    : `You're on the standby list for ${currentSlot.date}, ${currentSlot.time}. We'll reach out if a spot opens up.`;
+  document.getElementById('success-email').textContent = email;
+  document.getElementById('success-panel').classList.add('show');
+  renderSlots();
+}
+ 
 // ── ADMIN ──────────────────────────────────────────────
 function showAdmin() {
   document.getElementById('main-hero').style.display = 'none';
   document.getElementById('main-container').style.display = 'none';
   document.getElementById('main-footer').style.display = 'none';
   document.getElementById('admin-panel').classList.add('visible');
-  renderSlotSummary();
+  loadAdminData();
 }
 function showMain() {
   document.getElementById('main-hero').style.display = '';
@@ -358,39 +588,48 @@ function showMain() {
   document.getElementById('admin-panel').classList.remove('visible');
   window.location.hash = '';
 }
-
-function renderSlotSummary() {
-  const grid = document.getElementById('slot-summary');
-  grid.innerHTML = SLOTS.map(slot => {
-    const c = getSlotCounts(slot.id);
-    const mc = c.main, sc = c.standby;
-    const guestPips = Array.from({length: MAX_MAIN}, (_, i) =>
-      `<div class="ss-dot guest" style="opacity:${i < mc ? 1 : 0.2}"></div>`).join('');
-    const sbPips = Array.from({length: MAX_STANDBY}, (_, i) =>
-      `<div class="ss-dot standby" style="opacity:${i < sc ? 1 : 0.2}"></div>`).join('');
-    return `
-      <div class="slot-summary-card">
-        <div class="ss-date">${slot.date}</div>
-        <div class="ss-time">${slot.time}</div>
-        <div class="ss-bar">${guestPips}<span>${mc}/${MAX_MAIN} guests</span></div>
-        <div class="ss-bar">${sbPips}<span>${sc}/${MAX_STANDBY} standby</span></div>
-      </div>`;
+async function loadAdminData() { await loadSignups(true); renderAdminTable(); }
+ 
+function renderAdminTable() {
+  const statsEl = document.getElementById('admin-stats');
+  const tbody = document.getElementById('admin-tbody');
+  const gc = allSignups.filter(r => !(r.type||'').toLowerCase().includes('standby')).length;
+  const sc = allSignups.filter(r =>  (r.type||'').toLowerCase().includes('standby')).length;
+  statsEl.innerHTML = `
+    <div class="admin-stat"><span class="admin-stat-num">${allSignups.length}</span><span class="admin-stat-label">Total</span></div>
+    <div class="admin-stat"><span class="admin-stat-num">${gc}</span><span class="admin-stat-label">Guests</span></div>
+    <div class="admin-stat"><span class="admin-stat-num">${sc}</span><span class="admin-stat-label">Standby</span></div>`;
+  if (allSignups.length === 0) { tbody.innerHTML = '<tr><td colspan="10" class="admin-empty">No signups yet.</td></tr>'; return; }
+  tbody.innerHTML = allSignups.map((r, i) => {
+    const isStandby = (r.type||'').toLowerCase().includes('standby');
+    return `<tr>
+      <td>${i+1}</td><td><strong>${r.name||'—'}</strong></td><td>${r.age||'—'}</td>
+      <td>${r.location||'—'}</td><td>${r.phone||'—'}</td><td>${r.email||'—'}</td>
+      <td>${r.date||'—'}</td><td>${r.time||'—'}</td>
+      <td><span class="badge ${isStandby?'badge-standby':'badge-guest'}">${isStandby?'Standby':'Guest'}</span></td>
+      <td>${r.timestamp||'—'}</td>
+    </tr>`;
   }).join('');
 }
-
-// Reset counts (admin use)
-function resetCounts() {
-  if (confirm('Reset all local slot counts? This only affects the visual counters — your Google Sheet data is unchanged.')) {
-    localStorage.removeItem(COUNTS_KEY);
-    renderSlots();
-    renderSlotSummary();
-  }
+ 
+function showResetConfirm() { document.getElementById('admin-confirm').classList.add('show'); }
+function hideResetConfirm() { document.getElementById('admin-confirm').classList.remove('show'); }
+function confirmReset() { localStorage.removeItem(CACHE_KEY); buildState([]); hideResetConfirm(); renderAdminTable(); renderSlots(); alert('Cache cleared.'); }
+ 
+function exportCSV() {
+  const rows = [['#','Name','Age','Location','Phone','Email','Date','Time','Type','Registered']];
+  allSignups.forEach((r,i) => rows.push([i+1,r.name||'',r.age||'',r.location||'',r.phone||'',r.email||'',r.date||'',r.time||'',r.type||'',r.timestamp||'']));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'sadia-khan-signups.csv'; a.click();
 }
-
+ 
 function checkHash() { if (window.location.hash === '#admin') showAdmin(); }
 window.addEventListener('hashchange', checkHash);
 checkHash();
-renderSlots();
+if (window.location.hash !== '#admin') loadSignups();
 </script>
 </body>
 </html>
+ 
